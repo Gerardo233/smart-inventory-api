@@ -1,8 +1,6 @@
-import moongoose from "mongoose";
 import app from "./app";
 import config from "./config/config";
 import mongoose from "mongoose";
-import { log } from "console";
 
 mongoose
   .connect(config.databaseUrl)
