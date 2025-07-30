@@ -1,6 +1,11 @@
 import { Schema, model, Document } from "mongoose";
 
-interface ICategory extends Document {
+export interface CategoryInputFormat {
+  name: string;
+  description: string;
+}
+
+export interface ICategory extends Document {
   name: string;
   description: string;
   createdAt: Date;
