@@ -13,10 +13,19 @@ export const getByID = async (id: string): Promise<ICategory | null> => {
     throw new Error("Invalid ID format");
   }
   const item = await CategoryModel.findById(id);
+
+  if (!item) {
+    throw new Error("Category not found");
+  }
   return item;
 };
 
 export const create = async (data: CategoryInputFormat): Promise<ICategory> => {
+  const existingData = await CategoryModel.findOne({ name: data.name });
+  if (existingData) {
+    throw new Error("Item already exists");
+  }
+
   const item = new CategoryModel(data);
   return await item.save();
 };
