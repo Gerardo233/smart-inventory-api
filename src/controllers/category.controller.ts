@@ -84,3 +84,52 @@ export const createCategory = async (
     });
   }
 };
+
+export const updateCategoryByID = async (
+  req: Request,
+  res: Response<AppResponseFormat>
+) => {
+  try {
+    const { id } = req.params;
+    const commingData = req.body;
+    const item = await categoryServices.updateByID(id, commingData);
+
+    res.status(200).json({
+      code: httpStatusCodes.OK,
+      success: true,
+      message: CategoryCodes.CATEGORY_UPDATED,
+      singleData: item,
+    });
+  } catch (error) {
+    const systemError =
+      error instanceof Error ? error.message : "Something went wrong";
+    res.status(500).json({
+      code: httpStatusCodes.INTERNAL_SERVER_ERROR,
+      success: false,
+      message: CategoryCodes.CATEGORY_ERROR,
+      error: systemError,
+    });
+  }
+};
+
+export const deleteCategoryByID = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const item = await categoryServices.deleteByID(id);
+    res.status(200).json({
+      code: httpStatusCodes.OK,
+      success: true,
+      message: CategoryCodes.CATEGORY_DELETED,
+      singleData: item,
+    });
+  } catch (error) {
+    const systemError =
+      error instanceof Error ? error.message : "Something went wrong";
+    res.status(500).json({
+      code: httpStatusCodes.INTERNAL_SERVER_ERROR,
+      success: false,
+      message: CategoryCodes.CATEGORY_ERROR,
+      error: systemError,
+    });
+  }
+};
