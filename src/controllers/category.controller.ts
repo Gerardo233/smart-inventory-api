@@ -1,5 +1,5 @@
 import * as categoryServices from "../services/category.service";
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import { AppResponseFormat } from "../config/appResponse";
 import { httpStatusCodes } from "../config/httpCodes";
 import { CategoryCodes } from "../types/category.types";
@@ -7,7 +7,8 @@ import { CategoryCodes } from "../types/category.types";
 // Get all categories
 export const getAllCategories = async (
   req: Request,
-  res: Response<AppResponseFormat>
+  res: Response<AppResponseFormat>,
+  next: NextFunction
 ) => {
   try {
     const items = await categoryServices.getAll();
@@ -19,21 +20,15 @@ export const getAllCategories = async (
       data: items,
     });
   } catch (error: unknown) {
-    const systemError =
-      error instanceof Error ? error.message : "Something went wrong";
-    res.status(500).json({
-      success: false,
-      message: CategoryCodes.CATEGORY_ERROR,
-      error: systemError,
-      code: httpStatusCodes.INTERNAL_SERVER_ERROR,
-    });
+    next(error);
   }
 };
 
 // Get a specific category by ID
 export const getCategoryByID = async (
   req: Request,
-  res: Response<AppResponseFormat>
+  res: Response<AppResponseFormat>,
+  next: NextFunction
 ) => {
   try {
     const { id } = req.params;
@@ -45,22 +40,16 @@ export const getCategoryByID = async (
       message: CategoryCodes.CATEGORY_FOUND,
       singleData: item,
     });
-  } catch (error: unknown) {
-    const systemError =
-      error instanceof Error ? error.message : "Something went wrong";
-    res.status(500).json({
-      code: httpStatusCodes.INTERNAL_SERVER_ERROR,
-      success: false,
-      message: CategoryCodes.CATEGORY_ERROR,
-      error: systemError,
-    });
+  } catch (error) {
+    next(error);
   }
 };
 
 // Create a new category
 export const createCategory = async (
   req: Request,
-  res: Response<AppResponseFormat>
+  res: Response<AppResponseFormat>,
+  next: NextFunction
 ) => {
   try {
     const commingData = req.body;
@@ -73,21 +62,14 @@ export const createCategory = async (
       singleData: item,
     });
   } catch (error: unknown) {
-    const systemError =
-      error instanceof Error ? error.message : "Something went wrong";
-
-    res.status(500).json({
-      code: httpStatusCodes.INTERNAL_SERVER_ERROR,
-      success: false,
-      message: CategoryCodes.CATEGORY_ERROR,
-      error: systemError,
-    });
+    next(error);
   }
 };
 
 export const updateCategoryByID = async (
   req: Request,
-  res: Response<AppResponseFormat>
+  res: Response<AppResponseFormat>,
+  next: NextFunction
 ) => {
   try {
     const { id } = req.params;
@@ -101,18 +83,15 @@ export const updateCategoryByID = async (
       singleData: item,
     });
   } catch (error) {
-    const systemError =
-      error instanceof Error ? error.message : "Something went wrong";
-    res.status(500).json({
-      code: httpStatusCodes.INTERNAL_SERVER_ERROR,
-      success: false,
-      message: CategoryCodes.CATEGORY_ERROR,
-      error: systemError,
-    });
+    next(error);
   }
 };
 
-export const deleteCategoryByID = async (req: Request, res: Response) => {
+export const deleteCategoryByID = async (
+  req: Request,
+  res: Response<AppResponseFormat>,
+  next: NextFunction
+) => {
   try {
     const { id } = req.params;
     const item = await categoryServices.deleteByID(id);
@@ -123,13 +102,6 @@ export const deleteCategoryByID = async (req: Request, res: Response) => {
       singleData: item,
     });
   } catch (error) {
-    const systemError =
-      error instanceof Error ? error.message : "Something went wrong";
-    res.status(500).json({
-      code: httpStatusCodes.INTERNAL_SERVER_ERROR,
-      success: false,
-      message: CategoryCodes.CATEGORY_ERROR,
-      error: systemError,
-    });
+    next(error);
   }
 };

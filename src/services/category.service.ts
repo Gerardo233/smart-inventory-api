@@ -3,22 +3,25 @@ import CategoryModel, {
   CategoryInputFormat,
   ICategory,
 } from "../models/category.model";
+import { AppError } from "../middlewares/globalError.middelware";
+import { CategoryCodes } from "../types/category.types";
 
 // Get all categories
 export const getAll = async (): Promise<Array<ICategory>> => {
-  return await CategoryModel.find({});
+  const items = await CategoryModel.find({});
+  return items;
 };
 
 // Get a specific category by ID
 export const getByID = async (id: string): Promise<ICategory | null> => {
   if (!mongoose.Types.ObjectId.isValid(id)) {
-    throw new Error("Invalid ID format");
+    throw new AppError(CategoryCodes.CATEGORY_INVALID_ID, 400);
   }
   const item = await CategoryModel.findById(id);
-
   if (!item) {
-    throw new Error("Category not found");
+    throw new AppError(CategoryCodes.CATEGORY_NOT_FOUND, 404);
   }
+
   return item;
 };
 
@@ -26,7 +29,7 @@ export const getByID = async (id: string): Promise<ICategory | null> => {
 export const create = async (data: CategoryInputFormat): Promise<ICategory> => {
   const existingData = await CategoryModel.findOne({ name: data.name });
   if (existingData) {
-    throw new Error("Item already exists");
+    throw new AppError(CategoryCodes.CATEGORY_ALREADY_EXISTS, 409);
   }
 
   const item = new CategoryModel(data);
@@ -39,7 +42,7 @@ export const updateByID = async (
   data: Partial<CategoryInputFormat>
 ): Promise<ICategory | null> => {
   if (!mongoose.Types.ObjectId.isValid(id)) {
-    throw new Error("Invalid ID format");
+    throw new AppError(CategoryCodes.CATEGORY_INVALID_ID, 400);
   }
   const item = await CategoryModel.findByIdAndUpdate(id, data, {
     new: true,
@@ -47,7 +50,7 @@ export const updateByID = async (
   });
 
   if (!item) {
-    throw new Error("Category not found");
+    throw new AppError(CategoryCodes.CATEGORY_NOT_FOUND, 404);
   }
 
   return item;
@@ -56,11 +59,11 @@ export const updateByID = async (
 // Delete a category by ID
 export const deleteByID = async (id: string): Promise<ICategory | null> => {
   if (!mongoose.Types.ObjectId.isValid(id)) {
-    throw new Error("Invalid ID format");
+    throw new AppError(CategoryCodes.CATEGORY_INVALID_ID, 400);
   }
   const item = await CategoryModel.findByIdAndDelete(id);
   if (!item) {
-    throw new Error("Something went wrong");
+    throw new AppError(CategoryCodes.CATEGORY_NOT_FOUND, 404);
   }
 
   return item;
