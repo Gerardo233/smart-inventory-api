@@ -5,6 +5,7 @@ import CategoryModel, {
 } from "../models/category.model";
 import { AppError } from "../middlewares/globalError.middelware";
 import { CategoryCodes } from "../types/category.types";
+import { HttpStatusCodes } from "../config/appResponse";
 
 // Get all categories
 export const getAll = async (): Promise<Array<ICategory>> => {
@@ -15,11 +16,17 @@ export const getAll = async (): Promise<Array<ICategory>> => {
 // Get a specific category by ID
 export const getByID = async (id: string): Promise<ICategory | null> => {
   if (!mongoose.Types.ObjectId.isValid(id)) {
-    throw new AppError(CategoryCodes.CATEGORY_INVALID_ID, 400);
+    throw new AppError(
+      CategoryCodes.CATEGORY_INVALID_ID,
+      HttpStatusCodes.BAD_REQUEST
+    );
   }
   const item = await CategoryModel.findById(id);
   if (!item) {
-    throw new AppError(CategoryCodes.CATEGORY_NOT_FOUND, 404);
+    throw new AppError(
+      CategoryCodes.CATEGORY_NOT_FOUND,
+      HttpStatusCodes.NOT_FOUND
+    );
   }
 
   return item;
@@ -29,7 +36,10 @@ export const getByID = async (id: string): Promise<ICategory | null> => {
 export const create = async (data: CategoryInputFormat): Promise<ICategory> => {
   const existingData = await CategoryModel.findOne({ name: data.name });
   if (existingData) {
-    throw new AppError(CategoryCodes.CATEGORY_ALREADY_EXISTS, 409);
+    throw new AppError(
+      CategoryCodes.CATEGORY_ALREADY_EXISTS,
+      HttpStatusCodes.CONFLICT
+    );
   }
 
   const item = new CategoryModel(data);
@@ -42,7 +52,10 @@ export const updateByID = async (
   data: Partial<CategoryInputFormat>
 ): Promise<ICategory | null> => {
   if (!mongoose.Types.ObjectId.isValid(id)) {
-    throw new AppError(CategoryCodes.CATEGORY_INVALID_ID, 400);
+    throw new AppError(
+      CategoryCodes.CATEGORY_INVALID_ID,
+      HttpStatusCodes.BAD_REQUEST
+    );
   }
   const item = await CategoryModel.findByIdAndUpdate(id, data, {
     new: true,
@@ -50,7 +63,10 @@ export const updateByID = async (
   });
 
   if (!item) {
-    throw new AppError(CategoryCodes.CATEGORY_NOT_FOUND, 404);
+    throw new AppError(
+      CategoryCodes.CATEGORY_NOT_FOUND,
+      HttpStatusCodes.NOT_FOUND
+    );
   }
 
   return item;
@@ -59,11 +75,17 @@ export const updateByID = async (
 // Delete a category by ID
 export const deleteByID = async (id: string): Promise<ICategory | null> => {
   if (!mongoose.Types.ObjectId.isValid(id)) {
-    throw new AppError(CategoryCodes.CATEGORY_INVALID_ID, 400);
+    throw new AppError(
+      CategoryCodes.CATEGORY_INVALID_ID,
+      HttpStatusCodes.BAD_REQUEST
+    );
   }
   const item = await CategoryModel.findByIdAndDelete(id);
   if (!item) {
-    throw new AppError(CategoryCodes.CATEGORY_NOT_FOUND, 404);
+    throw new AppError(
+      CategoryCodes.CATEGORY_NOT_FOUND,
+      HttpStatusCodes.NOT_FOUND
+    );
   }
 
   return item;

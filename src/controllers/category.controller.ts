@@ -1,8 +1,8 @@
 import * as categoryServices from "../services/category.service";
 import { Request, Response, NextFunction } from "express";
 import { AppResponseFormat } from "../config/appResponse";
-import { httpStatusCodes } from "../config/httpCodes";
 import { CategoryCodes } from "../types/category.types";
+import { HttpStatusCodes, HttpMethods } from "../config/appResponse";
 
 // Get all categories
 export const getAllCategories = async (
@@ -13,8 +13,9 @@ export const getAllCategories = async (
   try {
     const items = await categoryServices.getAll();
 
-    res.status(200).json({
-      code: httpStatusCodes.OK,
+    res.status(HttpStatusCodes.OK).json({
+      httpMethod: HttpMethods.GET,
+      code: HttpStatusCodes.OK,
       success: true,
       message: CategoryCodes.CATEGORIES_FETCHED,
       data: items,
@@ -34,8 +35,9 @@ export const getCategoryByID = async (
     const { id } = req.params;
     const item = await categoryServices.getByID(id);
 
-    res.status(200).json({
-      code: httpStatusCodes.OK,
+    res.status(HttpStatusCodes.OK).json({
+      httpMethod: HttpMethods.GET,
+      code: HttpStatusCodes.OK,
       success: true,
       message: CategoryCodes.CATEGORY_FOUND,
       singleData: item,
@@ -55,8 +57,9 @@ export const createCategory = async (
     const commingData = req.body;
     const item = await categoryServices.create(commingData);
 
-    res.status(201).json({
-      code: httpStatusCodes.CREATED,
+    res.status(HttpStatusCodes.CREATED).json({
+      httpMethod: HttpMethods.POST,
+      code: HttpStatusCodes.CREATED,
       success: true,
       message: CategoryCodes.CATEGORY_CREATED,
       singleData: item,
@@ -76,8 +79,9 @@ export const updateCategoryByID = async (
     const commingData = req.body;
     const item = await categoryServices.updateByID(id, commingData);
 
-    res.status(200).json({
-      code: httpStatusCodes.OK,
+    res.status(HttpStatusCodes.OK).json({
+      httpMethod: HttpMethods.PUT,
+      code: HttpStatusCodes.OK,
       success: true,
       message: CategoryCodes.CATEGORY_UPDATED,
       singleData: item,
@@ -95,8 +99,9 @@ export const deleteCategoryByID = async (
   try {
     const { id } = req.params;
     const item = await categoryServices.deleteByID(id);
-    res.status(200).json({
-      code: httpStatusCodes.OK,
+    res.status(HttpStatusCodes.OK).json({
+      httpMethod: HttpMethods.DELETE,
+      code: HttpStatusCodes.OK,
       success: true,
       message: CategoryCodes.CATEGORY_DELETED,
       singleData: item,

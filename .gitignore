@@ -8,3 +8,21 @@ build/
 
 # Env variables
 .env
+
+# Logs
+logs/
+*.log 
+*.log.*
+
+# Coverage
+coverage/
+
+# Temporary files
+tmp/
+temp/ 
+
+# IDEs and Editors
+.vscode/
+.idea/
+
+.tmp-mongo/
